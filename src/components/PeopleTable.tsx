@@ -26,7 +26,7 @@ export const PeopleTable: React.FC<PeopleTableProps> = ({
   const sort = searchParams.get('sort') || '';
   const order = searchParams.get('order') || 'asc';
   const sex = searchParams.get('sex') || '';
-  const centuries = searchParams.getAll('century');
+  const centuries = searchParams.getAll('centuries');
 
   const filteredPeople = people.filter(person => {
     const lowerQuery = query.toLowerCase();
@@ -90,7 +90,7 @@ export const PeopleTable: React.FC<PeopleTableProps> = ({
     if (currentSort !== field) {
       params.set('sort', field);
       params.delete('order');
-    } else if (currentOrder === 'asc') {
+    } else if (!currentOrder) {
       params.set('order', 'desc');
     } else {
       params.delete('sort');

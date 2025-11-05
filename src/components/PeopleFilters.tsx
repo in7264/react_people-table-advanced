@@ -6,6 +6,8 @@ import React from 'react';
 export const PeopleFilters = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
+  const selectedCenturies = searchParams.getAll('centuries');
+
   const query = searchParams.get('query') || '';
   const sex = searchParams.get('sex') || '';
 
@@ -39,13 +41,11 @@ export const PeopleFilters = () => {
     const params = new URLSearchParams(searchParams);
 
     if (!newCentury) {
-      params.delete('century');
+      params.delete('centuries');
       setSearchParams(params);
 
       return;
     }
-
-    const selectedCenturies = params.getAll('century');
 
     if (selectedCenturies.includes(String(newCentury))) {
       const index = selectedCenturies.indexOf(String(newCentury));
@@ -55,9 +55,9 @@ export const PeopleFilters = () => {
       selectedCenturies.push(String(newCentury));
     }
 
-    params.delete('century');
+    params.delete('centuries');
 
-    selectedCenturies.forEach(cent => params.append('century', cent));
+    selectedCenturies.forEach(cent => params.append('centuries', cent));
 
     setSearchParams(params);
   }
@@ -110,7 +110,7 @@ export const PeopleFilters = () => {
             <a
               data-cy="century"
               className={classNames(
-                `button mr-1 ${new URLSearchParams(searchParams).getAll('century').includes('16') ? 'is-info' : ''}`,
+                `button mr-1 ${selectedCenturies.includes('16') ? 'is-info' : ''}`,
               )}
               onClick={() => handleCenturyChange(16)}
             >
@@ -120,7 +120,7 @@ export const PeopleFilters = () => {
             <a
               data-cy="century"
               className={classNames(
-                `button mr-1 ${new URLSearchParams(searchParams).getAll('century').includes('17') ? 'is-info' : ''}`,
+                `button mr-1 ${selectedCenturies.includes('17') ? 'is-info' : ''}`,
               )}
               onClick={() => handleCenturyChange(17)}
             >
@@ -130,7 +130,7 @@ export const PeopleFilters = () => {
             <a
               data-cy="century"
               className={classNames(
-                `button mr-1 ${new URLSearchParams(searchParams).getAll('century').includes('18') ? 'is-info' : ''}`,
+                `button mr-1 ${selectedCenturies.includes('18') ? 'is-info' : ''}`,
               )}
               onClick={() => handleCenturyChange(18)}
             >
@@ -140,7 +140,7 @@ export const PeopleFilters = () => {
             <a
               data-cy="century"
               className={classNames(
-                `button mr-1 ${new URLSearchParams(searchParams).getAll('century').includes('19') ? 'is-info' : ''}`,
+                `button mr-1 ${selectedCenturies.includes('19') ? 'is-info' : ''}`,
               )}
               onClick={() => handleCenturyChange(19)}
             >
@@ -150,7 +150,7 @@ export const PeopleFilters = () => {
             <a
               data-cy="century"
               className={classNames(
-                `button mr-1 ${new URLSearchParams(searchParams).getAll('century').includes('20') ? 'is-info' : ''}`,
+                `button mr-1 ${selectedCenturies.includes('20') ? 'is-info' : ''}`,
               )}
               onClick={() => handleCenturyChange(20)}
             >
