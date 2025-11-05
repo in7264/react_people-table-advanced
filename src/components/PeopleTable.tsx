@@ -5,13 +5,20 @@ import { getPeople } from '../api';
 import { Loader } from './Loader';
 import { PersonLink } from './PersonLink';
 
+interface PeopleTableProps {
+  isLoading: boolean;
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
 /* eslint-disable jsx-a11y/control-has-associated-label */
-export const PeopleTable = () => {
+export const PeopleTable: React.FC<PeopleTableProps> = ({
+  isLoading,
+  setIsLoading,
+}) => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const { slug } = useParams<{ slug?: string }>();
   const [people, setPeople] = useState<Person[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
   const [selectedPerson, setSelectedPerson] = useState<string | null>(null);
 
@@ -19,18 +26,23 @@ export const PeopleTable = () => {
   const sort = searchParams.get('sort') || '';
   const order = searchParams.get('order') || 'asc';
   const sex = searchParams.get('sex') || '';
-  const century = searchParams.get('century') || '';
+  const centuries = searchParams.getAll('century');
 
   const filteredPeople = people.filter(person => {
-    const matchedQuery = person.name
-      .toLowerCase()
-      .includes(query.toLowerCase());
+    const lowerQuery = query.toLowerCase();
+
+    const matchedQuery =
+      person.name.toLowerCase().includes(lowerQuery) ||
+      (person.motherName &&
+        person.motherName.toLowerCase().includes(lowerQuery)) ||
+      (person.fatherName &&
+        person.fatherName.toLowerCase().includes(lowerQuery));
 
     const matchedSex = sex ? person.sex === sex : true;
 
     const bornCentury = Math.floor((person.born - 1) / 100) + 1;
     const matchedCentury =
-      century.length === 0 || century.includes(String(bornCentury));
+      centuries.length === 0 || centuries.includes(String(bornCentury));
 
     return matchedQuery && matchedSex && matchedCentury;
   });
@@ -77,7 +89,7 @@ export const PeopleTable = () => {
 
     if (currentSort !== field) {
       params.set('sort', field);
-      params.set('order', 'asc');
+      params.delete('order');
     } else if (currentOrder === 'asc') {
       params.set('order', 'desc');
     } else {
@@ -105,7 +117,7 @@ export const PeopleTable = () => {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [setIsLoading]);
 
   useEffect(() => {
     setSelectedPerson(slug || null);
@@ -165,7 +177,12 @@ export const PeopleTable = () => {
                           ? 'has-background-warning'
                           : ''
                       }
-                      onClick={() => navigate(`/people/${person.slug}`)}
+                      onClick={() =>
+                        navigate({
+                          pathname: `/people/${person.slug}`,
+                          search: searchParams.toString(),
+                        })
+                      }
                     >
                       <td>
                         <PersonLink people={people} name={person.name} />
